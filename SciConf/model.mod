@@ -14,26 +14,38 @@ int S[N][N] = ...;
 
 // Define here your decision variables and any other auxiliary data.
 dvar boolean NTR[N][T][R];
+dvar float+ z;
+dvar float+ NT[N][N][T];
 
 // You can run an execute block if needed.
 
 // Write here the objective function.
-minimize sum (i1 in N, i2 in N, j in T, k1 in R, k2 in R) NTR[i1][j][k1] * NTR[i2][j][k2] * S[i1][i2];
+minimize z;
 
 subject to {
   
+    // Constraint I
 	forall (i in N)
 	  sum (j in T, k in R) NTR[i][j][k] == 1;
 	  
+  	// Constraint II
 	forall (j in T, k in R)
 	  sum (i in N) NTR[i][j][k] <= 1;
 	
-	forall (j in T)
-	  sum (i1 in N, i2 in N, k1 in R, k2 in R) (NTR[i1][j][k1] + NTR[i2][j][k2]) * P[i1][i2] <= 1;
-//	
-//	forall (i1 in N, i2 in N, j1 in T, j2 in T)
-//	  sum (k in R) NTR[i1][j1][k] * NTR[i2][j2][k] * P[i1][i2] * (j1 - j2) <= d;
-	  
+    // Constraint III
+	forall (i1 in N, i2 in N, j in T)
+	  NT[i1][i2][j] * P[i1][i2] <= 0;
+	
+    // Constraint IV
+	forall (i1 in N, i2 in N, j1 in T, j2 in T)
+	   * P[i1][i2] * (j1 - j2) <= d;
+	
+	forall (i1 in N, i2 in N, j in T)
+	  NT[i1][i2][j] >= -1+sum (k in R) (NTR[i1][j][k] + NTR[i2][j][k]);
+
+	 // Constraint V (objective)
+	 z >= 1-sum (i1 in N, i2 in N, j in T, k1 in R, k2 in R) (1-NTR[i1][j][k1] + 1-NTR[i2][j][k2] + 1-S[i1][i2]); 
+	 
 }
 
 execute {

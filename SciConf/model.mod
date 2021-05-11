@@ -17,22 +17,22 @@ dvar boolean NTR[N][T][R];
 
 // You can run an execute block if needed.
 
-
-minimize sum (n1 in N, n2 in N, t in T) S[n1][n2] * sum (r in R) NTR[n1][t][r] * NTR[n2][t][r]; // Write here the objective function.
+// Write here the objective function.
+minimize sum (i1 in N, i2 in N, j in T, k1 in R, k2 in R) NTR[i1][j][k1] * NTR[i2][j][k2] * S[i1][i2];
 
 subject to {
   
-	forall (n in N)
-	  sum (t in T, r in R) NTR[n][t][r] == 1;
+	forall (i in N)
+	  sum (j in T, k in R) NTR[i][j][k] == 1;
 	  
-	forall (t in T, r in R)
-	  sum (n in N) NTR[n][t][r] <= 1;
+	forall (j in T, k in R)
+	  sum (i in N) NTR[i][j][k] <= 1;
 	
-	forall (n1 in N, n2 in N, t in T)
-	  P[n1][n2] * (sum (r in R) NTR[n1][t][r] + sum (r in R) NTR[n2][t][r]) <= 1;
-	
-	forall (n1 in N, n2 in N, t1 in T, t2 in T)
-	  P[n1][n2] * sum (r in R) NTR[n1][t1][r] * NTR[n2][t2][r] * (t1 - t2) <= d; //!!
+	forall (j in T)
+	  sum (i1 in N, i2 in N, k1 in R, k2 in R) (NTR[i1][j][k1] + NTR[i2][j][k2]) * P[i1][i2] <= 1;
+//	
+//	forall (i1 in N, i2 in N, j1 in T, j2 in T)
+//	  sum (k in R) NTR[i1][j1][k] * NTR[i2][j2][k] * P[i1][i2] * (j1 - j2) <= d;
 	  
 }
 
@@ -45,6 +45,9 @@ execute {
   for (var i in T) for (var k in R) talkOfSlotRoom[i][k] = 0;
 
   // Populate here arrays slotOfTalk, roomOfTalk, talkOfSlotRoom.
+//  slotOfTalk = 
+//  roomOfTalk = 
+//  talkOfSlotRoom = 
 
   writeln();
 

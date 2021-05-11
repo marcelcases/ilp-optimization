@@ -14,13 +14,12 @@ int S[N][N] = ...;
 
 // Define here your decision variables and any other auxiliary data.
 dvar boolean NTR[N][T][R];
-dvar float+ z;
-dvar float+ NT[N][N][T];
+dvar boolean NT[N][N][T];
 
 // You can run an execute block if needed.
 
 // Write here the objective function.
-minimize z;
+minimize sum(i1 in N, i2 in N, j in T) S[i1][i2] * NT[i1][i2][j];
 
 subject to {
   
@@ -34,18 +33,20 @@ subject to {
 	
     // Constraint III
 	forall (i1 in N, i2 in N, j in T)
+	  NT[i1][i2][j] >= -1+sum (k in R) (NTR[i1][j][k] + NTR[i2][j][k]);
+	  
+	forall (i1 in N, i2 in N, j in T)
 	  NT[i1][i2][j] * P[i1][i2] <= 0;
 	
     // Constraint IV
-	forall (i1 in N, i2 in N, j1 in T, j2 in T)
-	   * P[i1][i2] * (j1 - j2) <= d;
+	/*forall (i1 in N, i2 in N, j1 in T, j2 in T)
+	   * P[i1][i2] * (j1 - j2) <= d;*/
 	
-	forall (i1 in N, i2 in N, j in T)
-	  NT[i1][i2][j] >= -1+sum (k in R) (NTR[i1][j][k] + NTR[i2][j][k]);
 
 	 // Constraint V (objective)
+	 /* No fa falta
 	 z >= 1-sum (i1 in N, i2 in N, j in T, k1 in R, k2 in R) (1-NTR[i1][j][k1] + 1-NTR[i2][j][k2] + 1-S[i1][i2]); 
-	 
+	 */
 }
 
 execute {
@@ -57,9 +58,21 @@ execute {
   for (var i in T) for (var k in R) talkOfSlotRoom[i][k] = 0;
 
   // Populate here arrays slotOfTalk, roomOfTalk, talkOfSlotRoom.
-//  slotOfTalk = 
-//  roomOfTalk = 
-//  talkOfSlotRoom = 
+  var i = 0
+  for (var i in N){
+    for (var j in T){
+      for(var r in R){
+        if(NTR[i][j][r] > 0){
+          //registrar slot
+          slotOfTalk[i] = j;
+          //registrar room
+          roomOfTalk[i] = r;
+          //talk of slot
+          talkOfSlotRoom[j][r] = i;
+        }
+      }
+    }
+  }
 
   writeln();
 

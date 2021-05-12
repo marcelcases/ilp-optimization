@@ -15,11 +15,12 @@ int S[N][N] = ...;
 // Define here your decision variables and any other auxiliary data.
 dvar boolean NTR[N][T][R];
 dvar boolean NT[N][N][T];
+dvar boolean AUX[N][N][T][T];
 
 // You can run an execute block if needed.
 
 // Write here the objective function.
-minimize sum(i1 in N, i2 in N, j in T) S[i1][i2] * NT[i1][i2][j];
+minimize 1/2 * sum(i1 in N, i2 in N, j in T) S[i1][i2] * NT[i1][i2][j];
 
 subject to {
   
@@ -39,8 +40,12 @@ subject to {
 	  NT[i1][i2][j] * P[i1][i2] <= 0;
 	
     // Constraint IV
-	/*forall (i1 in N, i2 in N, j1 in T, j2 in T)
-	   * P[i1][i2] * (j1 - j2) <= d;*/
+    //Aux variable
+    forall (i1 in N, i2 in N, j1 in T, j2 in T)
+	  AUX[i1][i2][j1][j2] >= -1+sum (k in R) (NTR[i1][j1][k] + NTR[i2][j2][k]);
+    
+	forall (i1 in N, i2 in N, j1 in T, j2 in T)
+	   AUX[i1][i2][j1][j2]  * P[i1][i2] * pow((j1-j2),2) <= pow(d,2);
 	
 
 	 // Constraint V (objective)

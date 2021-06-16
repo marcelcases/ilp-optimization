@@ -13,7 +13,7 @@ Spring 2021
 * Marcel Cases
 &lt;marcel.cases@estudiantat.upc.edu&gt;
 
-# Statement
+## Statement
 
 In a scientific conference, the program chair (PC) is in charge of scheduling the different talks. Scheduling a talk means assigning a room and a time slot to it. The PC is particularly concerned about the way talks on related topics are scheduled.
 
